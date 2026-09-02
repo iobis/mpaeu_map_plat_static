@@ -1,0 +1,2 @@
+import{D as e,G as t,O as n,ct as r,x as i}from"../chunks/DEGnGEpJ.js";import"../chunks/xihTtKlq.js";var a=r({prerender:()=>!0,ssr:()=>!1,trailingSlash:()=>o}),o=`always`;function s(r,a){var o=n(),s=t(o);i(s,()=>a.children),e(r,o)}export{s as component,a as universal};
+//# sourceMappingURL=0.CnE2ALUA.js.map
