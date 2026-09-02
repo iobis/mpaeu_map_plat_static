@@ -1,0 +1,29 @@
+services:
+  titiler:
+    image: ghcr.io/developmentseed/titiler:latest
+    command: uvicorn titiler.application.main:app --host 0.0.0.0 --port 8000 --workers 1
+    ports:
+      - '8000:8000'
+    environment:
+      TITILER_API_CORS_ORIGINS: '*'
+      # Standard rio-tiler/GDAL tuning for remote (HTTP range-request) COG reads.
+      GDAL_DISABLE_READDIR_ON_OPEN: EMPTY_DIR
+      GDAL_CACHEMAX: '200'
+      CPL_VSIL_CURL_CACHE_SIZE: '200000000'
+      VSI_CACHE: 'TRUE'
+      VSI_CACHE_SIZE: '5000000'
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      args:
+        # Baked into the static build at image-build time (see Dockerfile) —
+        # must be reachable from the *browser*, not just from inside the
+        # compose network, so it can't be the internal service name `titiler`.
+        PUBLIC_TITILER_URL: ${PUBLIC_TITILER_URL:-http://localhost:8000}
+    ports:
+      - '8080:80'
+    depends_on:
+      - titiler
+    restart: unless-stopped

@@ -1,0 +1,44 @@
+{
+  "taxonID": ["WoRMS AphiaID for the species"],
+  "scientificName": ["Scientific name of the species"],
+  "group": ["The group assigned by MPA Europe to this species (e.g. mammals)"],
+  "hab_depth": ["The species position on the column of water, i.e. if benthic or pelagic"],
+  "model_date": ["The date in which the species was modelled"],
+  "model_acro": ["An unique identifier of the modelling exercise"],
+  "n_init_points": ["Number of quality-controlled occurrence points available for model fitting. Note that other filters are applied."],
+  "model_fit_points": ["Number of occurrence points used for model fitting after filters."],
+  "model_eval_points": ["Number of occurrence points set aside for model evaluation (independent of cross-validation)."],
+  "algorithms": ["Name of algorithms used for modeling."],
+  "algorithms_parameters": ["Parameters used in model tuning. Any parameter with more than 1 value is tuned through cross-validation."],
+  "model_result": ["If model succeeded for that particular method."],
+  "model_bestparams": ["The best parameters used to train final model according to tuning."],
+  "model_details": {
+    "ecoregions": ["Realms from Costello et al. 2017 used for defining 'native' areas"],
+    "ecoregions_included": ["Realms considering a small buffer around occurrence records. This is used for model fitting."],
+    "limited_by_depth": ["TRUE if a depth limiting was applied (removing areas beyond the maximum depth where species was recorded, plus the `depth_buffer`)"],
+    "depth_buffer": ["Buffer applied to the maximum depth where the species was recorded."],
+    "block_size": ["Size used for the cross-validation spatial blocks."],
+    "background_size": ["Number of points used as quadrature/background points."],
+    "control_bias": ["Details of the spatial bias control applied, if any."],
+    "hypothesis_tested": ["Hypothesis (sets of environmental variables) tested"],
+    "best_hypothesis": ["Best hypothesis selected"],
+    "variables": ["Variables from the best hypothesis"]
+  },
+  "model_good": ["Models that performed well according to metric"],
+  "model_good_metric": ["Metric used to assess model quality"],
+  "model_good_threshold": ["Value used as a threshold to define a good model."],
+  "model_posteval": {
+    "model_name": ["Post-evaluation considering SST limits and overlap for each model technique"],
+    "niche": ["Niche equivalency tests considering occurrence records and a sample of the predicted suitability (see ecospat::ecospat.niche.equivalency.test)."],
+    "hyperniche": ["Tests overlap between real occurrence records and a sample of predicted suitability on the environmental space using hypervolume"]
+  },
+  "model_uncertainty": {
+    "bootstrap_status": ["If bootstrap was done for this species"],
+    "bootstrap_iterations": ["Number of iterations used for bootstraping"],
+    "bootstrap_models": ["Which models were bootstraped"],
+    "bootstrap_max_n": ["In some cases, if many records are available, to reduce the bootstrap time we reduce the maximum number of records of either the quadrature, the records, or both."]
+  },
+  "other_details": ["Additional details about the model"],
+  "timings": ["Timings, in minutes, for each model step."],
+  "obissdm_version": ["Version of the `obissdm` package, which was created specifically to this framework (see https://github.com/iobis/mpaeu_msdm)"]
+}
