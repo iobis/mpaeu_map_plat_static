@@ -59,6 +59,18 @@ export function linearColormap(min: number, max: number, fromHex: string, toHex:
 	return out;
 }
 
+// Every exported URL builder below interpolates `${titilerBaseUrl}/cog/...` —
+// if the configured base URL itself ends in a slash (an easy, common
+// mistake: `https://titiler.example.org/` instead of `.../org`), plain
+// concatenation produces a double slash (`.../org//cog/...`) that titiler's
+// router doesn't match, returning a 404 whose response — since it's an
+// unmatched route, not a real endpoint — carries no CORS headers either, so
+// the browser reports it as a CORS failure on top of the 404. Stripping any
+// trailing slash(es) here means the configured value works either way.
+function stripTrailingSlash(url: string): string {
+	return url.replace(/\/+$/, '');
+}
+
 function hex(v: string): string {
 	return v.replace('#', '');
 }
@@ -109,7 +121,7 @@ export function titilerTileUrlTemplate(titilerBaseUrl: string, cogUrl: string, o
 		params.set('resampling', opts.resampling ?? 'bilinear');
 	}
 
-	return `${titilerBaseUrl}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}?${params.toString()}`;
+	return `${stripTrailingSlash(titilerBaseUrl)}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}?${params.toString()}`;
 }
 
 export interface TitilerPreviewParams {
@@ -139,13 +151,13 @@ export function titilerPreviewUrl(titilerBaseUrl: string, cogUrl: string, opts: 
 		params.set('rescale', `${vmin},${vmax}`);
 		if (opts.colormapName) params.set('colormap_name', opts.colormapName);
 	}
-	return `${titilerBaseUrl}/cog/preview.png?${params.toString()}`;
+	return `${stripTrailingSlash(titilerBaseUrl)}/cog/preview.png?${params.toString()}`;
 }
 
 /** Real min/max for one band — used to set a sensible `rescale` for the SHAPE preview, whose value range varies a lot per species. */
 export async function fetchTitilerBandStats(titilerBaseUrl: string, cogUrl: string, bandIndex1Based: number): Promise<{ min: number; max: number }> {
 	const params = new URLSearchParams({ url: cogUrl, bidx: String(bandIndex1Based) });
-	const res = await fetch(`${titilerBaseUrl}/cog/statistics?${params.toString()}`);
+	const res = await fetch(`${stripTrailingSlash(titilerBaseUrl)}/cog/statistics?${params.toString()}`);
 	if (!res.ok) throw new Error(`HTTP ${res.status} fetching titiler statistics`);
 	const data = (await res.json()) as Record<string, { min: number; max: number }>;
 	const stats = data[`b${bandIndex1Based}`];
