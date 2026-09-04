@@ -1,11 +1,10 @@
 # Deploys the frontend only (a static bundle) — raster tiles now come from a
 # titiler backend that must be hosted separately (e.g. the docker-compose.yml
 # / Dockerfile in this repo, run on any container host). Set BASE_PATH and
-# PUBLIC_TITILER_URL as Variables on the `github-pages` environment (Settings
-# > Environments > github-pages > Environment variables) — the `environment:`
-# key below is what makes `vars.*` resolve against that environment's
-# variables rather than only repository-level ones; without it, both would
-# silently fall back to their defaults (localhost) no matter what's set there.
+# PUBLIC_TITILER_URL as plain *repository* variables (Settings > Secrets and
+# variables > Actions > Variables tab — not under any Environment) before
+# relying on this workflow; both otherwise fall back to a localhost default,
+# which will not work for visitors.
 name: Deploy to GitHub Pages
 
 on:
@@ -19,7 +18,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: github-pages
 
     steps:
       - uses: actions/checkout@v4
