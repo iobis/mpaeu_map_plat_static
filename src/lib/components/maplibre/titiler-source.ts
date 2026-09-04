@@ -99,9 +99,19 @@ export function titilerTileUrlTemplate(titilerBaseUrl: string, cogUrl: string, o
 		// Discrete colormap keyed by exact raw pixel value (masks are stored as
 		// plain 0/1 integers): below threshold -> opaque grey, at/above -> alpha 0
 		// (fully transparent, letting whatever is stacked below show through).
+		//
+		// Only the (few) values below the threshold get an explicit entry —
+		// titiler/rio-tiler already defaults any value with no colormap entry
+		// to fully transparent, so there's no need to spell out the transparent
+		// half across all 256 possible byte values; doing that produced a query
+		// string long enough (~4KB for the colormap param alone) that
+		// titiler.geo.obis.org's own reverse proxy rejected the whole request
+		// with a flat 414 (Request-URI Too Long) — confirmed directly against
+		// that instance, along with confirming the two renderings are
+		// pixel-identical wherever titiler does apply.
 		const colormap: Record<string, [number, number, number, number]> = {};
-		for (let v = 0; v < 256; v++) {
-			colormap[v] = v < threshold ? [r, g, b, 255] : [0, 0, 0, 0];
+		for (let v = 0; v < Math.ceil(threshold); v++) {
+			colormap[v] = [r, g, b, 255];
 		}
 		params.set('colormap', JSON.stringify(colormap));
 		params.set('resampling', 'nearest'); // never blend across the mask's hard edge
