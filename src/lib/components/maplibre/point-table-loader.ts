@@ -8,16 +8,19 @@
  *
  * Uses hyparquet: pure JS, no WASM (consistent with this project's other
  * client-side format readers — geotiff.js, flatgeobuf — none of which need a
- * WASM runtime), and reads over HTTP range requests via `asyncBufferFromUrl`
- * so a lon/lat-only column read never downloads the whole file.
+ * WASM runtime). Fetches each file's full bytes (via parquet-fetch.ts) rather
+ * than hyparquet's own HTTP range-based reader, which breaks under GitHub
+ * Pages' gzip-compressing CDN (see that file) — an acceptable trade for these
+ * tiny per-species occurrence files (tens to low hundreds of rows).
  *
  * For row counts in the thousands this plain row-object shape is fine; a much
  * larger occurrence dataset would be better served by hyparquet's columnar
  * `parquetRead` (onChunk) API feeding a deck.gl binary data shape directly —
- * not needed for the current dataset sizes (tens to low hundreds of rows).
+ * not needed for the current dataset sizes.
  */
 
-import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
+import { parquetReadObjects } from 'hyparquet';
+import { fetchParquetBuffer } from '$lib/data/parquet-fetch.js';
 import { ScatterplotLayer } from '@deck.gl/layers';
 
 export interface PointTableRow {
@@ -34,7 +37,7 @@ export interface PointTableOptions {
 }
 
 export async function loadPointTable(url: string, opts: PointTableOptions): Promise<PointTableRow[]> {
-	const file = await asyncBufferFromUrl({ url });
+	const file = await fetchParquetBuffer(url);
 	const columns = opts.columns ?? undefined; // undefined = read all columns
 	const rows = await parquetReadObjects({ file, columns });
 

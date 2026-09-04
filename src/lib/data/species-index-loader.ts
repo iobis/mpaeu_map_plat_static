@@ -12,8 +12,9 @@
  * while building this; no fuzzy-search library needed at this scale).
  */
 
-import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
+import { parquetReadObjects } from 'hyparquet';
 import { base } from '$app/paths';
+import { fetchParquetBuffer } from './parquet-fetch.js';
 import type { ModelMethod } from './species-catalogue.js';
 
 export interface SpeciesIndexRow {
@@ -67,7 +68,7 @@ let cache: Promise<SpeciesIndexRow[]> | null = null;
 export function loadSpeciesIndex(): Promise<SpeciesIndexRow[]> {
 	if (!cache) {
 		cache = (async () => {
-			const file = await asyncBufferFromUrl({ url: `${base}/data/species-index.parquet` });
+			const file = await fetchParquetBuffer(`${base}/data/species-index.parquet`);
 			const rows = await parquetReadObjects({ file });
 			return rows.map(toIndexRow);
 		})();

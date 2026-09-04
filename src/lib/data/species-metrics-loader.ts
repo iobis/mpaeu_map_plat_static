@@ -4,15 +4,18 @@
  * Client-side readers for the per-species model-quality parquet/JSON files
  * (cvmetrics, varimportance, respcurves, thresholds, log) that back the
  * "contextual results" section below the map in the Shiny app. Uses
- * hyparquet, same as point-table-loader.ts — no WASM, plain HTTP range
- * requests.
+ * hyparquet, same as point-table-loader.ts — no WASM. Fetches each file's
+ * full bytes (via parquet-fetch.ts) rather than hyparquet's own HTTP
+ * range-based reader — see that file for why (breaks under GitHub Pages'
+ * gzip-compressing CDN).
  *
  * All reshaping here was written against real parsed output from the actual
  * files for taxonid=243036 (columns/shapes confirmed empirically, not
  * guessed from the Shiny R source), so column names below are exact.
  */
 
-import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
+import { parquetReadObjects } from 'hyparquet';
+import { fetchParquetBuffer } from './parquet-fetch.js';
 
 // ── Model metrics table (cvmetrics.parquet) ──────────────────────────────────
 // One row per CV fold. Columns: unthresholded (auc, cbi, pr, prg) plus
@@ -43,7 +46,7 @@ function sd(xs: number[]): number {
 }
 
 export async function loadCvMetrics(url: string): Promise<MetricRow[]> {
-	const file = await asyncBufferFromUrl({ url });
+	const file = await fetchParquetBuffer(url);
 	const rows = (await parquetReadObjects({ file })) as Record<string, number>[];
 	if (!rows.length) return [];
 
@@ -102,7 +105,7 @@ export function humanizeVariable(variable: string): string {
 }
 
 export async function loadVarImportance(url: string): Promise<VarImportanceRow[]> {
-	const file = await asyncBufferFromUrl({ url });
+	const file = await fetchParquetBuffer(url);
 	const rows = (await parquetReadObjects({ file })) as { variable: string; mean: number; sd: number }[];
 	return rows
 		.map((r) => ({ variable: r.variable, label: humanizeVariable(r.variable), mean: r.mean, sd: r.sd }))
@@ -118,7 +121,7 @@ export interface RespCurvePoint {
 }
 
 export async function loadRespCurves(url: string): Promise<Map<string, RespCurvePoint[]>> {
-	const file = await asyncBufferFromUrl({ url });
+	const file = await fetchParquetBuffer(url);
 	const rows = (await parquetReadObjects({ file })) as {
 		variable: string;
 		response: number;
@@ -151,7 +154,7 @@ export interface ThresholdsRow {
 }
 
 export async function loadThresholds(url: string, method: string): Promise<ThresholdsRow | null> {
-	const file = await asyncBufferFromUrl({ url });
+	const file = await fetchParquetBuffer(url);
 	const rows = (await parquetReadObjects({ file })) as ThresholdsRow[];
 	return rows.find((r) => r.model === method) ?? rows[0] ?? null;
 }

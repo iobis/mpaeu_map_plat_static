@@ -27,6 +27,8 @@
 	import ThermalResultsGrid from '$lib/components/species/ThermalResultsGrid.svelte';
 	import HabitatResultsGrid from '$lib/components/species/HabitatResultsGrid.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import WelcomeModal from '$lib/components/WelcomeModal.svelte';
+	import AppTourModal from '$lib/components/AppTourModal.svelte';
 	import {
 		predictionUrl,
 		maskUrl,
@@ -46,6 +48,12 @@
 
 	type TabId = 'species' | 'thermal' | 'habitat';
 	let activeTab = $state<TabId>('species');
+
+	// Ports the Shiny app's `shinyalert("Welcome", ...)` (components/maprenders.R)
+	// — shown unconditionally on every load, same as the original (no
+	// dismissal/"don't show again" persistence there either).
+	let welcomeOpen = $state(true);
+	let tourOpen = $state(false);
 
 	const TABS = [
 		{ id: 'species', label: 'Species', enabled: true },
@@ -397,6 +405,9 @@
 
 	<Footer />
 </div>
+
+<WelcomeModal bind:open={welcomeOpen} onTour={() => (tourOpen = true)} />
+<AppTourModal bind:open={tourOpen} />
 
 <style>
 	:global(body) {

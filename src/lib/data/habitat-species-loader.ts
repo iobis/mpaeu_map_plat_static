@@ -22,7 +22,8 @@
  * so those are left out rather than guessed.
  */
 
-import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
+import { parquetReadObjects } from 'hyparquet';
+import { fetchParquetBuffer } from './parquet-fetch.js';
 import { loadSpeciesIndex, type SpeciesIndexRow } from './species-index-loader.js';
 
 export interface HabitatSpeciesRow {
@@ -38,7 +39,7 @@ export interface HabitatSpeciesRow {
 }
 
 export async function loadHabitatSpecies(fitoccUrl: string): Promise<HabitatSpeciesRow[]> {
-	const file = await asyncBufferFromUrl({ url: fitoccUrl });
+	const file = await fetchParquetBuffer(fitoccUrl);
 	const rows = (await parquetReadObjects({ file })) as { species: string; taxonID: number }[];
 
 	const distinct = new Map<number, string>();
