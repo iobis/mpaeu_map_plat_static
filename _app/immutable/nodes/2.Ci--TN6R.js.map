@@ -1,0 +1,1 @@
+{"version":3,"file":"2.Ci--TN6R.js","names":[],"sources":["../../../../../../src/routes/+page.svelte"],"sourcesContent":["<script lang=\"ts\">\n\timport AppShell from '$lib/components/AppShell.svelte';\n</script>\n\n<AppShell />\n"],"mappings":"sGAAA,SAAA,EAAA,EAAA,CAIC,EAAQ,EAAA,CAAA,CAAA,CAFD"}

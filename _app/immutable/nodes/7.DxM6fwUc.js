@@ -1,0 +1,2 @@
+import{P as e,Z as t,ct as n,et as r,tt as i}from"../chunks/DEGnGEpJ.js";import"../chunks/xihTtKlq.js";import{t as a}from"../chunks/148lZG5r.js";import{t as o}from"../chunks/DGts7Q2H.js";var s=n({prerender:()=>!1});function c(n,s){i(s,!0);let c=t(()=>{let e=Number(a.params.taxonid);return Number.isFinite(e)?e:null});o(n,{get initialTaxonID(){return e(c)},showWelcome:!1}),r()}export{c as component,s as universal};
+//# sourceMappingURL=7.DxM6fwUc.js.map
