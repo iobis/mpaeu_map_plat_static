@@ -86,7 +86,8 @@ static/data/         Small static assets bundled with the site (species index, b
 ### Routes (`src/routes/`)
 
 - **`+layout.ts`** — sets `prerender = true`, `ssr = false`, `trailingSlash = 'always'` for the whole app (a pure static SPA build).
-- **`+page.svelte`** — the real app: map + tabbed control panel (Species / Thermal range / Habitat), the shared "Extra Controls" strip (mask, Realms/EEZs/MPAs, compare toggle), and the contextual-results grid below.
+- **`+page.svelte`** — a thin wrapper rendering `$lib/components/AppShell.svelte` (see below) — the actual app.
+- **`taxon/[taxonid]/+page.svelte`** — a direct, shareable link to one species by AphiaID (e.g. `/taxon/137080/`). Renders the same `AppShell`, pre-selecting that species once the index loads. Its `+page.ts` sets `prerender = false` (a static file per species isn't practical for 12k+ of them, and isn't needed either — this route is fully client-rendered like the rest of the app) — served instead by adapter-static's `fallback: '404.html'`, the same SPA-fallback mechanism GitHub Pages/`nginx.conf` already use for any unmatched path.
 - **`report/+page.svelte`** — the client-side species report (see "Report module" below). Reached via `?taxonid=&method=` query params, opened from the "Generate report" button on the Species tab.
 - **`compare/+page.svelte`** and **`demo/+page.svelte`** — standalone demo/reference pages used while building the map infrastructure (split-view compare demo, generic multi-layer catalogue demo). Not linked from the main app's navigation.
 - **`spike-titiler-check/+page.svelte`** — a throwaway page used to validate the TiTiler integration early on.

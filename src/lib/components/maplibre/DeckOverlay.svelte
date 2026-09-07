@@ -64,6 +64,14 @@
 	const tableCache   = new Map<string, Awaited<ReturnType<typeof loadPointTable>>>();
 	const loadingSet   = new Set<string>(); // IDs currently in-flight
 	const failedSet    = new Set<string>(); // IDs that failed — never retried
+	// Every cache above is keyed by `entry.id` alone, but an id's `url` can
+	// change across renders (e.g. the Species tab's occurrence-points layer
+	// keeps the same id "species-points" for every species — only its url
+	// changes). This records which url each id's cache entry actually
+	// corresponds to, so a url change is detected and treated as needing a
+	// fresh load, instead of `cache.has(id)` being true forever after the
+	// first species and silently reusing stale data for every id thereafter.
+	const loadedUrlForId = new Map<string, string>();
 
 	// Counter incremented after successful load → triggers rebuild effect only
 	let cacheVersion = $state(0);
@@ -132,7 +140,24 @@
 			const { id, url } = entry;
 			const cache = entry.layerKind === 'table' ? tableCache : geojsonCache;
 
-			// Skip: already loaded, in flight, or previously failed
+			// If this id's url changed since its last (successful, in-flight, or
+			// failed) load, its cached state is for the wrong data — clear it so
+			// the checks below correctly treat this as a fresh load, not a
+			// permanently-cached one.
+			if (loadedUrlForId.get(id) !== url) {
+				cache.delete(id);
+				if (failedSet.delete(id)) errorIds = [...failedSet]; // clear a stale error for the old url promptly
+				// Also reset the in-flight marker: without this, switching again
+				// while a previous load for the old url is still in flight would
+				// deadlock — the new load would see loadingSet.has(id) still true
+				// (from the stale one) and skip starting forever, since the stale
+				// load's own .finally() below is guarded to not clear it either.
+				loadingSet.delete(id);
+				loadedUrlForId.set(id, url);
+			}
+
+			// Skip: already loaded, in flight, or previously failed (all for this
+			// exact url, per the invalidation above)
 			if (cache.has(id) || loadingSet.has(id) || failedSet.has(id)) continue;
 
 			loadingSet.add(id);
@@ -141,9 +166,11 @@
 			const load =
 				entry.layerKind === 'table'
 					? loadPointTable(url, { lonField: entry.lonField, latField: entry.latField }).then((rows) => {
+							if (loadedUrlForId.get(id) !== url) return; // superseded by a newer url for this id
 							tableCache.set(id, rows);
 						})
 					: loadVector(id, url).then((data) => {
+							if (loadedUrlForId.get(id) !== url) return; // superseded by a newer url for this id
 							geojsonCache.set(id, data);
 							// Resolve the effective colours (explicit or auto-generated) and
 							// notify the parent so the legend can reflect what's on the map.
@@ -153,16 +180,20 @@
 
 			load
 				.then(() => {
-					cacheVersion += 1;
+					if (loadedUrlForId.get(id) === url) cacheVersion += 1;
 				})
 				.catch((e) => {
 					console.error(`[DeckOverlay] Failed to load "${id}":`, e);
-					failedSet.add(id);
-					errorIds = [...failedSet];
+					if (loadedUrlForId.get(id) === url) {
+						failedSet.add(id);
+						errorIds = [...failedSet];
+					}
 				})
 				.finally(() => {
-					loadingSet.delete(id);
-					loadingIds = [...loadingSet];
+					if (loadedUrlForId.get(id) === url) {
+						loadingSet.delete(id);
+						loadingIds = [...loadingSet];
+					}
 				});
 		}
 	});
