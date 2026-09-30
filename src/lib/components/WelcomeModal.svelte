@@ -67,8 +67,7 @@
 			</div>
 			<div class="modal-body">
 				<p class="intro">
-					Welcome to the MPA Europe map platform. Here, you can explore species and habitat range maps developed for the
-					<a href="https://mpa-europe.eu/" target="_blank" rel="noopener">MPA Europe project</a>.
+					Welcome to the OBIS Species Distribution Models map platform. Here, you can explore species and habitat range maps developed with support from the Horizon Europe <a href="https://mpa-europe.eu/" target="_blank" rel="noopener">"MPA Europe project"</a> Grant Agreement 101059988.
 				</p>
 
 				<div class="cards">

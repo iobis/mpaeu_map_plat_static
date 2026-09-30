@@ -8,7 +8,7 @@
 	 * app (the download/code flows are client-side re-implementations —
 	 * there's no R backend here — see species-download.ts).
 	 */
-	import { SCENARIO_OPTIONS, PERIOD_OPTIONS, MODEL_LABELS, logUrl, type ModelMethod, type ScenarioCode, type PeriodCode } from '$lib/data/species-catalogue.js';
+	import { PERIOD_OPTIONS, MODEL_LABELS, logUrl, type ModelMethod, type PeriodCode } from '$lib/data/species-catalogue.js';
 	import { loadSpeciesLog, type SpeciesLog } from '$lib/data/species-metrics-loader.js';
 	import { speciesView } from '$lib/stores/speciesView.svelte.js';
 	import SpeciesCombobox from './SpeciesCombobox.svelte';
@@ -16,6 +16,7 @@
 	import ExpertReviewBox from './ExpertReviewBox.svelte';
 	import DownloadDataModal from './DownloadDataModal.svelte';
 	import DownloadCodeModal from './DownloadCodeModal.svelte';
+	import ScenarioSelect from './ScenarioSelect.svelte';
 
 	speciesView.init();
 
@@ -152,18 +153,7 @@
 				</select>
 			</label>
 
-			<label class="field">
-				<span class="field-label">Scenario</span>
-				<select
-					class="ctrl-select"
-					value={speciesView.scenario}
-					onchange={(e) => speciesView.setScenario(e.currentTarget.value as ScenarioCode)}
-				>
-					{#each SCENARIO_OPTIONS as opt (opt.value)}
-						<option value={opt.value}>{opt.label}</option>
-					{/each}
-				</select>
-			</label>
+			<ScenarioSelect value={speciesView.scenario} onChange={(v) => speciesView.setScenario(v)} />
 
 			{#if speciesView.scenario !== 'current'}
 				<label class="field">

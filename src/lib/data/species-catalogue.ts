@@ -46,6 +46,28 @@ export const SCENARIO_OPTIONS: { value: ScenarioCode; label: string }[] = [
 	{ value: 'ssp585', label: 'SSP5' }
 ];
 
+/**
+ * Plain-language explanation of each climate scenario, for the Scenario
+ * selector's info icon (and the more prominent inline callout shown once a
+ * non-current one is picked). SSP = Shared Socioeconomic Pathway, the IPCC
+ * AR6 framework combining a socioeconomic narrative with a target radiative
+ * forcing (W/m²) by 2100 — standard, stable public climate-science framing,
+ * not something specific to this project's own data pipeline.
+ */
+export const SCENARIO_EXPLANATIONS: Record<ScenarioCode, string> = {
+	current: "Today's observed environmental conditions — no future climate projection applied.",
+	ssp126:
+		'SSP1-2.6 "Sustainability" — a low-emissions future with strong international cooperation and rapid climate action. The least severe warming trajectory modelled here.',
+	ssp245:
+		'SSP2-4.5 "Middle of the Road" — emissions and socioeconomic trends continue roughly as they have historically, without major additional climate action.',
+	ssp370:
+		'SSP3-7.0 "Regional Rivalry" — weak international cooperation and resurgent nationalism drive high emissions and slow adaptation. One of the more severe trajectories modelled here.',
+	ssp460:
+		'SSP4-6.0 "Inequality" — growing disparities between and within countries, with unevenly distributed development and moderate-to-high overall emissions.',
+	ssp585:
+		'SSP5-8.5 "Fossil-fuelled Development" — rapid, fossil-fuel-intensive economic growth and high energy demand. The most extreme warming trajectory modelled here.'
+};
+
 export const PERIOD_OPTIONS: { value: PeriodCode; label: string }[] = [
 	{ value: 'dec50', label: '2050' },
 	{ value: 'dec100', label: '2100' }
@@ -195,4 +217,26 @@ export const MASK_TYPE_LABELS = [
 	'Convex hull',
 	'Min. bounding circle',
 	'Buffer 100m'
+];
+
+/**
+ * What each mask in MASK_TYPE_LABELS actually restricts predictions to —
+ * same order, for the Mask type selector's info icon. Ported from the real
+ * mask-generation logic (`mpaeu_sdm`'s `.cm_save_masks`/`.cm_check_ecoregions`
+ * in `functions/components_model_species.R`), not invented: "Fit ecoregions"
+ * is confirmed there to be the occurrence realms *plus* their immediate
+ * neighbours (a 0.2°-buffer intersection test, not just the occurrence
+ * realms alone — that's "Native ecoregions"); "Buffer 100m" is confirmed to
+ * actually use a 100,000 m (100 km) buffer (`terra::buffer(..., width =
+ * 100000)`) despite its label/internal name — described here by its real
+ * distance, not its literal (misleading) name.
+ */
+export const MASK_TYPE_EXPLANATIONS = [
+	"Limited to the marine realms where the species has documented occurrence records — the species' native range.",
+	'Native ecoregions plus their immediate neighbouring realms — the (slightly larger) area the model was actually trained over.',
+	'The exact geographic extent of the environmental data used to fit the model.',
+	"Fit region, further limited to the species' records depth range.",
+	'The smallest convex polygon enclosing every occurrence record used to fit the model.',
+	'The smallest circle enclosing every occurrence record used to fit the model.',
+	'A 100 km buffer around every occurrence record used to fit the model.'
 ];

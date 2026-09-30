@@ -10,7 +10,7 @@
 	 * static/data/context_info.json.
 	 */
 	import { base } from '$app/paths';
-	import { SCENARIO_OPTIONS, PERIOD_OPTIONS, type ScenarioCode, type PeriodCode } from '$lib/data/species-catalogue.js';
+	import { PERIOD_OPTIONS, type PeriodCode } from '$lib/data/species-catalogue.js';
 	import {
 		HABITAT_OPTIONS,
 		HABITAT_THRESHOLD_OPTIONS,
@@ -22,6 +22,7 @@
 	} from '$lib/data/habitat-catalogue.js';
 	import { downloadRemoteFile } from '$lib/data/species-download.js';
 	import { habitatView } from '$lib/stores/habitatView.svelte.js';
+	import ScenarioSelect from './ScenarioSelect.svelte';
 
 	let downloading = $state(false);
 	let contextHtml = $state<Record<string, string[]> | null>(null);
@@ -98,14 +99,7 @@
 				</select>
 			</label>
 
-			<label class="field">
-				<span class="field-label">Scenario</span>
-				<select class="ctrl-select" value={habitatView.scenario} onchange={(e) => (habitatView.scenario = e.currentTarget.value as ScenarioCode)}>
-					{#each SCENARIO_OPTIONS as opt (opt.value)}
-						<option value={opt.value}>{opt.label}</option>
-					{/each}
-				</select>
-			</label>
+			<ScenarioSelect value={habitatView.scenario} onChange={(v) => (habitatView.scenario = v)} />
 
 			{#if habitatView.scenario !== 'current'}
 				<label class="field">

@@ -10,12 +10,13 @@
 	 * (no modal — Shiny's `downloadDataThermal` is a plain `downloadLink`,
 	 * unlike the Species tab's multi-file download modal).
 	 */
-	import { SCENARIO_OPTIONS, PERIOD_OPTIONS, logUrl, thermenvelopeUrl, type ScenarioCode, type PeriodCode } from '$lib/data/species-catalogue.js';
+	import { PERIOD_OPTIONS, logUrl, thermenvelopeUrl, type PeriodCode } from '$lib/data/species-catalogue.js';
 	import { loadSpeciesLog, type SpeciesLog } from '$lib/data/species-metrics-loader.js';
 	import { downloadRemoteFile } from '$lib/data/species-download.js';
 	import { thermalView } from '$lib/stores/thermalView.svelte.js';
 	import SpeciesCombobox from './SpeciesCombobox.svelte';
 	import SpeciesFilterModal from './SpeciesFilterModal.svelte';
+	import ScenarioSelect from './ScenarioSelect.svelte';
 
 	thermalView.init();
 
@@ -113,18 +114,7 @@
 		</div>
 
 		<div class="selectors">
-			<label class="field">
-				<span class="field-label">Scenario</span>
-				<select
-					class="ctrl-select"
-					value={thermalView.scenario}
-					onchange={(e) => thermalView.setScenario(e.currentTarget.value as ScenarioCode)}
-				>
-					{#each SCENARIO_OPTIONS as opt (opt.value)}
-						<option value={opt.value}>{opt.label}</option>
-					{/each}
-				</select>
-			</label>
+			<ScenarioSelect value={thermalView.scenario} onChange={(v) => thermalView.setScenario(v)} />
 
 			{#if thermalView.scenario !== 'current'}
 				<label class="field">

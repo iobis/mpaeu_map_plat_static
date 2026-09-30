@@ -79,6 +79,41 @@
 	let welcomeOpen = $state(initialWelcomeOpen());
 	let tourOpen = $state(false);
 
+	// ── Full screen ──────────────────────────────────────────────────────────
+	// Fullscreens `.map-col` itself (not the whole page), so only the map +
+	// its own overlays remain visible — MapLibre already resizes its canvas
+	// via its own internal ResizeObserver when its container's size changes,
+	// no manual `map.resize()` call needed here.
+	let mapColEl = $state<HTMLDivElement>();
+	let isFullscreen = $state(false);
+
+	$effect(() => {
+		function onFullscreenChange() {
+			isFullscreen = document.fullscreenElement === mapColEl;
+		}
+		document.addEventListener('fullscreenchange', onFullscreenChange);
+		return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+	});
+
+	function toggleFullscreen() {
+		if (!mapColEl) return;
+		if (document.fullscreenElement) {
+			document.exitFullscreen();
+		} else {
+			mapColEl.requestFullscreen();
+		}
+	}
+
+	// Shown as a bottom-centre overlay only while fullscreen — the whole point
+	// of this feature is seeing the map without the surrounding chrome, but
+	// without losing track of which species it's showing. Habitat has no
+	// species selection, so there's nothing to show there.
+	const fullscreenSpeciesName = $derived.by(() => {
+		if (activeTab === 'species') return speciesView.species?.scientificName ?? null;
+		if (activeTab === 'thermal') return thermalView.species?.scientificName ?? null;
+		return null;
+	});
+
 	// `speciesView.index` only finishes loading asynchronously (SpeciesTab's own
 	// `speciesView.init()`, fired on its mount, which happens immediately since
 	// `activeTab` already defaults to 'species') — wait for it, then apply the
@@ -280,7 +315,7 @@
 
 <div class="app-shell">
 	<div class="top-row">
-		<div class="map-col">
+		<div class="map-col" bind:this={mapColEl}>
 			{#snippet speciesLayer(which: 'current' | 'selected')}
 				{@const url = which === 'current' ? speciesCurrentUrl : predUrl}
 				{#if url}
@@ -416,6 +451,20 @@
 					<span class="legend-caption">Sum of species' likelihood of occurrence</span>
 				</div>
 			{/if}
+
+			<button
+				type="button"
+				class="fullscreen-btn"
+				onclick={toggleFullscreen}
+				title={isFullscreen ? 'Exit full screen' : 'View map full screen'}
+				aria-label={isFullscreen ? 'Exit full screen' : 'View map full screen'}
+			>
+				{isFullscreen ? '⤡' : '⛶'}
+			</button>
+
+			{#if isFullscreen && fullscreenSpeciesName}
+				<div class="fullscreen-species-name"><em>{fullscreenSpeciesName}</em></div>
+			{/if}
 		</div>
 
 		<div class="panel-col">
@@ -511,6 +560,50 @@
 		font-weight: 600;
 		color: #1e293b;
 		cursor: pointer;
+	}
+
+	.fullscreen-btn {
+		position: absolute;
+		/* Clear of MapLibre's own attribution control, which sits right at the
+		   bottom-right corner and (in its expanded/"open" state) spans nearly
+		   the full available width there — no amount of horizontal nudging
+		   fits a button beside it in that same row. */
+		bottom: 2.5rem;
+		right: 0.75rem;
+		z-index: 6;
+		width: 30px;
+		height: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(255, 255, 255, 0.92);
+		border: 1px solid #d8d8d8;
+		border-radius: 6px;
+		color: #475569;
+		font-size: 1rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.fullscreen-btn:hover {
+		background: #ffffff;
+		color: #006cd7;
+	}
+
+	.fullscreen-species-name {
+		position: absolute;
+		/* Clears .compare-toggle (also bottom-centre) when both are shown at once
+		   — e.g. fullscreen + split map viewer together. */
+		bottom: 3.25rem;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 6;
+		background: rgba(15, 23, 42, 0.7);
+		color: #ffffff;
+		padding: 0.4rem 1rem;
+		border-radius: 999px;
+		font-size: 0.95rem;
+		white-space: nowrap;
+		pointer-events: none;
 	}
 
 	.map-legend {

@@ -15,16 +15,22 @@
 	 * checkbox reused across every tab's `conditionalPanel`, not per-tab
 	 * state) — see mapOverlaysView.svelte.ts.
 	 */
-	import { THRESHOLD_OPTIONS, MASK_TYPE_LABELS, type ThresholdMode } from '$lib/data/species-catalogue.js';
+	import { THRESHOLD_OPTIONS, MASK_TYPE_LABELS, MASK_TYPE_EXPLANATIONS, type ThresholdMode } from '$lib/data/species-catalogue.js';
 	import { speciesView } from '$lib/stores/speciesView.svelte.js';
 	import { thermalView } from '$lib/stores/thermalView.svelte.js';
 	import { mapOverlaysView } from '$lib/stores/mapOverlaysView.svelte.js';
 	import { REALMS_ATTRIBUTION, EEZ_ATTRIBUTION, MPA_ATTRIBUTION } from '$lib/data/boundary-layers.js';
+	import InfoIcon from '$lib/components/InfoIcon.svelte';
 
 	interface Props {
 		variant: 'species' | 'thermal' | 'habitat';
 	}
 	let { variant }: Props = $props();
+
+	const MASK_TYPE_ENTRIES = MASK_TYPE_LABELS.map((label, i) => ({ term: label, description: MASK_TYPE_EXPLANATIONS[i] }));
+	const MASK_TYPE_TOOLTIP = MASK_TYPE_ENTRIES.map((e) => `${e.term}: ${e.description}`).join('\n\n');
+	const FILTER_ENTRIES = THRESHOLD_OPTIONS.map((o) => ({ term: o.label, description: o.hint }));
+	const FILTER_TOOLTIP = FILTER_ENTRIES.map((e) => `${e.term}: ${e.description}`).join('\n\n');
 </script>
 
 <div class="extra-controls">
@@ -41,8 +47,9 @@
 				{/each}
 			</select>
 		</label>
+		<InfoIcon label="Mask types" tooltip={MASK_TYPE_TOOLTIP} entries={MASK_TYPE_ENTRIES} />
 
-		<label class="ctrl" title={THRESHOLD_OPTIONS.find((o) => o.value === speciesView.thresholdMode)?.hint}>
+		<label class="ctrl">
 			<span class="ctrl-label">Filter</span>
 			<select
 				class="ctrl-select"
@@ -54,6 +61,7 @@
 				{/each}
 			</select>
 		</label>
+		<InfoIcon label="Filter options" tooltip={FILTER_TOOLTIP} entries={FILTER_ENTRIES} />
 
 		<button class="switch" class:on={speciesView.maskVisible} onclick={() => (speciesView.maskVisible = !speciesView.maskVisible)}>
 			<span class="dot" aria-hidden="true"></span>Show mask
@@ -79,17 +87,17 @@
 	<button class="switch" class:on={mapOverlaysView.showRealms} onclick={() => (mapOverlaysView.showRealms = !mapOverlaysView.showRealms)}>
 		<span class="dot" aria-hidden="true"></span>Show realms
 	</button>
-	<span class="info-icon" title={REALMS_ATTRIBUTION} aria-label={REALMS_ATTRIBUTION}>ⓘ</span>
+	<InfoIcon label="Realms" tooltip={REALMS_ATTRIBUTION} text={REALMS_ATTRIBUTION} />
 
 	<button class="switch" class:on={mapOverlaysView.showEEZ} onclick={() => (mapOverlaysView.showEEZ = !mapOverlaysView.showEEZ)}>
 		<span class="dot" aria-hidden="true"></span>Show EEZs
 	</button>
-	<span class="info-icon" title={EEZ_ATTRIBUTION} aria-label={EEZ_ATTRIBUTION}>ⓘ</span>
+	<InfoIcon label="EEZs" tooltip={EEZ_ATTRIBUTION} text={EEZ_ATTRIBUTION} />
 
 	<button class="switch" class:on={mapOverlaysView.showMPA} onclick={() => (mapOverlaysView.showMPA = !mapOverlaysView.showMPA)}>
 		<span class="dot" aria-hidden="true"></span>Show MPAs
 	</button>
-	<span class="info-icon" title={MPA_ATTRIBUTION} aria-label={MPA_ATTRIBUTION}>ⓘ</span>
+	<InfoIcon label="MPAs" tooltip={MPA_ATTRIBUTION} text={MPA_ATTRIBUTION} />
 </div>
 
 <style>
@@ -155,18 +163,5 @@
 	.switch:disabled {
 		cursor: default;
 		opacity: 0.5;
-	}
-
-	.info-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		margin-left: -0.4rem;
-		color: #94a3b8;
-		font-size: 0.85rem;
-		cursor: help;
-	}
-	.info-icon:hover {
-		color: #006cd7;
 	}
 </style>

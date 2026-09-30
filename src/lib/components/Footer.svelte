@@ -60,8 +60,10 @@
 				<h4>Explore more</h4>
 				<a href="https://mpa-europe.eu/" target="_blank" rel="noopener">› MPA Europe</a>
 				<a href="https://obis.org" target="_blank" rel="noopener">› OBIS</a>
-				<p class="credit">Product created by the <a href="https://obis.org" target="_blank" rel="noopener">Ocean Biodiversity Information System</a></p>
-				<img src="{base}/images/obis_logo.png" alt="OBIS" class="obis-logo" />
+				<a href="https://www.ioc.unesco.org/en" target="_blank" rel="noopener">› IOC</a>
+				<a href="https://iode.org/" target="_blank" rel="noopener">› IODE</a>
+				<p class="credit">Product created by the <a href="https://www.ioc.unesco.org/en" target="_blank" rel="noopener">Intergovernmental Oceanographic Commission (IOC)'s</a> <a href="https://obis.org" target="_blank" rel="noopener">Ocean Biodiversity Information System (OBIS)</a></p>
+				<img src="{base}/images/IOC_OBIS_logo_w.png" alt="OBIS" class="obis-logo" />
 			</div>
 
 			<div class="support">
@@ -80,7 +82,7 @@
 		</div>
 
 		<div class="license-line">
-			All data shown in this website is under a CC-0 licence. See project status
+			Species range maps are under a CC-BY-NC 4.0 licence <a href="https://products.obis.org/dataset/10-5281-zenodo-23018410" target="_blank" rel="noopener">(see more details here)</a>. See project status
 			<a href="https://github.com/iobis/mpaeu_map_platform/blob/main/NEWS.md" target="_blank" rel="noopener">here</a>.
 		</div>
 	</div>
@@ -171,13 +173,13 @@
 		font-size: 0.68rem;
 		color: #b8c9d9;
 		line-height: 1.5;
-		margin: 0.4rem 0 0.6rem;
+		margin: 0.8rem 0 0.6rem;
 	}
 	.credit a {
 		color: #b2edfa;
 	}
 	.obis-logo {
-		width: 140px;
+		width: 200px;
 		max-width: 100%;
 		height: auto;
 	}

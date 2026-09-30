@@ -341,6 +341,14 @@
 					responsible for them.
 				</p>
 			</div>
+
+			<div class="credit-band">
+				<p class="credit-text">
+					Product created by the <a href="https://www.ioc.unesco.org/en" target="_blank" rel="noopener">Intergovernmental Oceanographic Commission (IOC)</a
+					>'s <a href="https://obis.org" target="_blank" rel="noopener">Ocean Biodiversity Information System (OBIS)</a>
+				</p>
+				<img src="{base}/images/IOC_OBIS_logo_c.png" alt="IOC / OBIS" class="credit-logo" />
+			</div>
 		</footer>
 	</article>
 {/if}
@@ -568,6 +576,32 @@
 	}
 	.project-note p {
 		margin: 0.4rem 0;
+	}
+
+	.credit-band {
+		margin-top: 1.25rem;
+		padding-top: 1rem;
+		border-top: 1px solid #d8d8d8;
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		flex-wrap: wrap;
+	}
+	.credit-text {
+		margin: 0;
+		flex: 1;
+		min-width: 200px;
+		font-size: 0.72rem;
+		line-height: 1.5;
+		color: #64748b;
+	}
+	.credit-text a {
+		color: #006cd7;
+	}
+	.credit-logo {
+		width: 180px;
+		max-width: 100%;
+		height: auto;
 	}
 
 	@media print {
