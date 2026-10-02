@@ -27,7 +27,7 @@
 		<h3>How should I use this information?</h3>
 		<p>
 			Species Distribution Models (SDMs) provide valuable insights for both research and conservation efforts. These maps depict the relative
-			and potential suitability of habitats for a particular species, aiding researchers and conservationists in understanding where a species
+			and potential suitability of environmental conditions for a particular species, aiding researchers and conservationists in understanding where a species
 			could potentially occur. It is important to note that SDMs show suitability rather than presence, meaning the species may not actually
 			occur throughout the entire extent indicated on the map. Additionally, there is inherent uncertainty associated with all SDM maps,
 			stemming from various factors such as data quality, model assumptions, and environmental variability. Therefore, while SDMs offer
@@ -38,22 +38,18 @@
 		<h3>How to cite</h3>
 		<p>When using data from this platform, please cite it as follows:</p>
 		<p class="citation">
-			Ocean Biodiversity Information System (OBIS). (2024). Species distribution dashboard for MPA Europe. (version 0.1.0). <a
-				href="https://shiny.obis.org/distmaps"
-				target="_blank"
-				rel="noopener">https://shiny.obis.org/distmaps</a
-			>. Zenodo.
-			<a href="https://doi.org/10.5281/zenodo.14524781" target="_blank" rel="noopener">https://doi.org/10.5281/zenodo.14524781</a>
+			Principe, S., Provoost, P., Appeltans, W., Assis, J., Burrows, M. T., Stephenson, F., Addamo, A., & Costello, M. J. (2026). Species distribution models for marine species occurring in European waters - OBIS/MPA Europe (Version v.1.0.0) [Data set]. Zenodo.
+			<a href="https://doi.org/10.5281/zenodo.14524781" target="_blank" rel="noopener">https://doi.org/10.5281/zenodo.23018411</a>
 		</p>
 	</div>
 
 	<div class="project-band">
-		<h3>MPA Europe project</h3>
+		<!-- <h3>MPA Europe project</h3>
 		<p class="project-desc">
 			Using a holistic range of measures that include the range of biodiversity from species to ecosystems, including habitats, areas will be
 			prioritised using systematic conservation planning software. This enables alternative weighting of variables and multiple scenarios and
 			thus support wider marine spatial planning.
-		</p>
+		</p> -->
 
 		<div class="project-grid">
 			<div class="explore">
