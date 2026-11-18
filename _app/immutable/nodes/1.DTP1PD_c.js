@@ -1,0 +1,2 @@
+import{B as e,D as t,E as n,G as r,K as i,k as a,nt as o,q as s,tt as c}from"../chunks/YfWPOo2Q.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/BFloFnWE.js";var u=a(`<h1> </h1> <p> </p>`,1);function d(a,d){o(d,!0);var f=u(),p=r(f),m=i(p,!0),h=s(p,2),g=i(h,!0);e(()=>{n(m,l.status),n(g,l.error?.message)}),t(a,f),c()}export{d as component};
+//# sourceMappingURL=1.DTP1PD_c.js.map
