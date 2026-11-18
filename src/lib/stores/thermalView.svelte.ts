@@ -43,6 +43,8 @@ class ThermalViewStore implements SpeciesSelectionView {
 
 	// ── Filter modal ───────────────────────────────────────────────────────────
 	filter = $state<FilterCriteria>({ ...DEFAULT_FILTER });
+	/** No ESM switch on the thermal tab — the candidate pool is the whole index. */
+	candidateIndex = $derived(this.index);
 	filterActive = $derived(!isDefaultFilter(this.filter));
 	filteredIndex = $derived(this.filterActive ? applyFilter(this.index, this.filter) : this.index);
 

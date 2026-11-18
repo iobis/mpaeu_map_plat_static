@@ -45,7 +45,14 @@ class SpeciesViewStore {
 	// ── Filter modal ───────────────────────────────────────────────────────────
 	filter = $state<FilterCriteria>({ ...DEFAULT_FILTER });
 	filterActive = $derived(!isDefaultFilter(this.filter));
-	filteredIndex = $derived(this.filterActive ? applyFilter(this.index, this.filter) : this.index);
+	/** Ensemble-of-small-models species are hidden unless the user opts in (they are experimental — see EsmWarningModal). */
+	includeEsm = $state(false);
+	candidateIndex = $derived(this.includeEsm ? this.index : this.index.filter((r) => !r.availableMethods.includes('esm')));
+	filteredIndex = $derived(this.filterActive ? applyFilter(this.candidateIndex, this.filter) : this.candidateIndex);
+
+	setIncludeEsm(v: boolean) {
+		this.includeEsm = v;
+	}
 
 	setFilter(f: FilterCriteria) {
 		this.filter = f;

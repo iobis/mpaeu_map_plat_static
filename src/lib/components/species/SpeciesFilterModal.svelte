@@ -31,15 +31,15 @@
 		if (open) draft = { ...view.filter };
 	});
 
-	const matchCount = $derived(applyFilter(view.index, draft).length);
+	const matchCount = $derived(applyFilter(view.candidateIndex, draft).length);
 
-	const groupOptions = $derived(facetOptions(view.index, draft, 'group'));
-	const phylumOptions = $derived(facetOptions(view.index, draft, 'phylum'));
-	const classOptions = $derived(facetOptions(view.index, draft, 'class'));
-	const orderOptions = $derived(facetOptions(view.index, draft, 'order'));
-	const familyOptions = $derived(facetOptions(view.index, draft, 'family'));
-	const commonNameOptions = $derived(facetListOptions(view.index, draft, 'commonName'));
-	const regionOptions = $derived(facetListOptions(view.index, draft, 'region'));
+	const groupOptions = $derived(facetOptions(view.candidateIndex, draft, 'group'));
+	const phylumOptions = $derived(facetOptions(view.candidateIndex, draft, 'phylum'));
+	const classOptions = $derived(facetOptions(view.candidateIndex, draft, 'class'));
+	const orderOptions = $derived(facetOptions(view.candidateIndex, draft, 'order'));
+	const familyOptions = $derived(facetOptions(view.candidateIndex, draft, 'family'));
+	const commonNameOptions = $derived(facetListOptions(view.candidateIndex, draft, 'commonName'));
+	const regionOptions = $derived(facetListOptions(view.candidateIndex, draft, 'region'));
 
 	function cancel() {
 		open = false;

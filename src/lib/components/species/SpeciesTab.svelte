@@ -13,6 +13,7 @@
 	import { speciesView } from '$lib/stores/speciesView.svelte.js';
 	import SpeciesCombobox from './SpeciesCombobox.svelte';
 	import SpeciesFilterModal from './SpeciesFilterModal.svelte';
+	import EsmWarningModal from './EsmWarningModal.svelte';
 	import ExpertReviewBox from './ExpertReviewBox.svelte';
 	import DownloadDataModal from './DownloadDataModal.svelte';
 	import DownloadCodeModal from './DownloadCodeModal.svelte';
@@ -21,6 +22,17 @@
 	speciesView.init();
 
 	let filterModalOpen = $state(false);
+	let esmWarningOpen = $state(false);
+
+	function onEsmToggle(input: HTMLInputElement) {
+		if (input.checked) {
+			// Only turns on once the user confirms in the warning modal.
+			input.checked = false;
+			esmWarningOpen = true;
+		} else {
+			speciesView.setIncludeEsm(false);
+		}
+	}
 	let downloadDataOpen = $state(false);
 	let downloadCodeOpen = $state(false);
 
@@ -71,17 +83,32 @@
 		</button>
 	</div>
 
+	<label class="esm-switch">
+		<input type="checkbox" role="switch" checked={speciesView.includeEsm} onchange={(e) => onEsmToggle(e.currentTarget)} />
+		<span>Include ESM models <span class="esm-tag">experimental</span></span>
+	</label>
+
 	{#if speciesView.filterActive}
 		<p class="filter-status">
 			<span class="dot" aria-hidden="true"></span>
-			Filter active — {speciesView.filteredIndex.length} of {speciesView.index.length} species
+			Filter active — {speciesView.filteredIndex.length} of {speciesView.candidateIndex.length} species
 			<button type="button" class="clear-link" onclick={() => speciesView.clearFilter()}>Clear</button>
 		</p>
 	{:else if !speciesView.indexLoading && !speciesView.indexError}
-		<p class="index-hint">{speciesView.index.length} species available</p>
+		<p class="index-hint">{speciesView.candidateIndex.length} species available</p>
 	{/if}
 
 	<SpeciesFilterModal bind:open={filterModalOpen} view={speciesView} />
+	<EsmWarningModal
+		open={esmWarningOpen}
+		onConfirm={() => {
+			speciesView.setIncludeEsm(true);
+			esmWarningOpen = false;
+		}}
+		onCancel={() => {
+			esmWarningOpen = false;
+		}}
+	/>
 
 	{#if speciesView.species}
 		<div class="species-title-box">
@@ -261,6 +288,23 @@
 		background: #dbeafe;
 		border-color: #006cd7;
 		color: #006cd7;
+	}
+
+	.esm-switch {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.7rem;
+		color: #475569;
+		cursor: pointer;
+	}
+	.esm-tag {
+		font-size: 0.6rem;
+		color: #b45309;
+		background: #fef3c7;
+		border-radius: 3px;
+		padding: 0.05rem 0.3rem;
+		margin-left: 0.2rem;
 	}
 
 	.filter-status,

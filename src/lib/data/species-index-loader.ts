@@ -150,6 +150,8 @@ export function isDefaultFilter(f: FilterCriteria): boolean {
  */
 export interface SpeciesSelectionView {
 	readonly index: SpeciesIndexRow[];
+	/** `index` minus anything the store excludes outright (e.g. ESM-only species while the ESM switch is off) — the pool the filter modal and the combobox draw from. */
+	readonly candidateIndex: SpeciesIndexRow[];
 	readonly filteredIndex: SpeciesIndexRow[];
 	readonly filterActive: boolean;
 	readonly filter: FilterCriteria;

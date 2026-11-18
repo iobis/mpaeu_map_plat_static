@@ -29,18 +29,24 @@
 	let highlighted = $state(0);
 	let inputEl: HTMLInputElement;
 
+	const PREVIEW_LIMIT = 40;
+	/** "Show full list" — render every match instead of the first PREVIEW_LIMIT. Reset whenever the query changes. */
+	let showAll = $state(false);
+
 	const allMatches = $derived(searchSpecies(view.filteredIndex, query, Infinity));
-	const candidates = $derived(allMatches.slice(0, 40));
+	const candidates = $derived(showAll ? allMatches : allMatches.slice(0, PREVIEW_LIMIT));
 
 	function onInput() {
 		open = true;
 		highlighted = 0;
+		showAll = false;
 	}
 
 	function select(taxonID: number, name: string) {
 		view.selectSpecies(taxonID);
 		query = name;
 		open = false;
+		showAll = false;
 	}
 
 	function onKeydown(e: KeyboardEvent) {
@@ -106,7 +112,28 @@
 				</li>
 			{/each}
 			{#if allMatches.length > candidates.length}
-				<li class="more-hint">+{allMatches.length - candidates.length} more — keep typing to narrow it down</li>
+				<li class="more-hint">
+					<span>+{allMatches.length - candidates.length} more — keep typing to narrow it down, or</span>
+					<button
+						type="button"
+						class="show-all-btn"
+						onmousedown={(e) => e.preventDefault()}
+						onclick={() => (showAll = true)}
+					>
+						show the full list ({allMatches.length})
+					</button>
+				</li>
+			{:else if showAll && allMatches.length > PREVIEW_LIMIT}
+				<li class="more-hint">
+					<button
+						type="button"
+						class="show-all-btn"
+						onmousedown={(e) => e.preventDefault()}
+						onclick={() => (showAll = false)}
+					>
+						show fewer
+					</button>
+				</li>
 			{/if}
 		</ul>
 	{:else if open && query.trim()}
@@ -180,6 +207,15 @@
 		padding: 0.35rem 0.5rem;
 		font-size: 0.65rem;
 		color: #94a3b8;
+	}
+	.show-all-btn {
+		background: none;
+		border: none;
+		padding: 0;
+		font-size: inherit;
+		color: #006cd7;
+		text-decoration: underline;
+		cursor: pointer;
 	}
 
 	.empty-state {
